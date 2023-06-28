@@ -1,8 +1,20 @@
 import db from "../../db/db.js";
 
 const getProductUnit = (req, res) => {
-  const q = "SELECT * FROM productUnitConversion";
+  const q =
+    "SELECT puc.idproductUnitConversion, puc.idproduct, puc.iduom, puc.unitQty,puc.iduom, p.code, p.name as product, u.name as uom  FROM test.productUnitConversion as puc JOIN test.product as p ON puc.idproduct = p.idproduct JOIN test.uom as u ON puc.iduom = u.iduom";
   db.query(q, (err, data) => {
+    if (err) {
+      return res.json(err.sqlMessage);
+    }
+    return res.json(data);
+  });
+};
+const getProductUnitById = (req, res) => {
+  const id = req.params.id;
+  const q =
+    "SELECT puc.idproductUnitConversion, puc.idproduct, puc.iduom, puc.unitQty,puc.iduom, p.code, p.name as product, u.name as uom  FROM test.productUnitConversion as puc JOIN test.product as p ON puc.idproduct = p.idproduct JOIN test.uom as u ON puc.iduom = u.iduom WHERE puc.idproductUnitConversion = ?";
+  db.query(q, id, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
     }
@@ -47,6 +59,7 @@ const deleteProductUnit = (req, res) => {
 };
 export {
   getProductUnit,
+  getProductUnitById,
   createProductUnit,
   updateProductUnit,
   deleteProductUnit,
