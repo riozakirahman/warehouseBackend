@@ -1,8 +1,7 @@
 import db from "../../db/db.js";
 
 const getProduct = (req, res) => {
-  const q =
-    "SELECT p.idproduct, p.code, p.name, p.quantity, u.name AS uom FROM test.product as p JOIN test.uom as u ON p.baseUOM = u.iduom";
+  const q = "SELECT * from test.product";
   db.query(q, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -12,8 +11,7 @@ const getProduct = (req, res) => {
 };
 const getProductById = (req, res) => {
   const id = req.params.id;
-  const q =
-    "SELECT p.idproduct, p.code, p.name, p.quantity, u.name AS uom FROM test.product as p JOIN test.uom as u ON p.baseUOM = u.iduom WHERE p.idproduct = ?";
+  const q = "SELECT * from test.product WHERE idproduct = ?";
   db.query(q, id, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -22,10 +20,9 @@ const getProductById = (req, res) => {
   });
 };
 const createProduct = (req, res) => {
-  const { code, name, quantity, baseUOM } = req.body;
-  const values = [code, name, quantity, baseUOM];
-  const q =
-    "INSERT INTO product (code, name, quantity, baseUOM) VALUES (?,?,?,?)";
+  const { code, name } = req.body;
+  const values = [code, name];
+  const q = "INSERT INTO product (code, name) VALUES (?,?)";
   db.query(q, values, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -35,10 +32,10 @@ const createProduct = (req, res) => {
 };
 
 const updateProduct = (req, res) => {
-  const { code, name, quantity, baseUOM } = req.body;
+  const { code, name } = req.body;
   const id = req.params.id;
-  const values = [code, name, quantity, baseUOM, id];
-  const q = `UPDATE product SET code = ?, name = ?, quantity = ?, baseUOM = ? WHERE idproduct = ?`;
+  const values = [code, name, id];
+  const q = `UPDATE product SET code = ?, name = ?  WHERE idproduct = ?`;
   db.query(q, values, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);

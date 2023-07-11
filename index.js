@@ -15,6 +15,8 @@ import uomRouter from "./router/product/uomRouter.js";
 import productRouter from "./router/product/productRouter.js";
 import productUnitRouter from "./router/product/productUnitRouter.js";
 import warehouseRouter from "./router/product/warehouseRouter.js";
+import stockRouter from "./router/stock/stockRouter.js";
+import adjRouter from "./router/adjustment/adjustment.js";
 
 dotenv.config();
 const app = express();
@@ -39,6 +41,8 @@ app.use("/api/uom", uomRouter);
 app.use("/api/product", productRouter);
 app.use("/api/productunit", productUnitRouter);
 app.use("/api/warehouse", warehouseRouter);
+app.use("/api/stock", stockRouter);
+app.use("/api/adjustment", adjRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("run on http://localhost:4000");
