@@ -17,6 +17,8 @@ import productUnitRouter from "./router/product/productUnitRouter.js";
 import warehouseRouter from "./router/product/warehouseRouter.js";
 import stockRouter from "./router/stock/stockRouter.js";
 import adjRouter from "./router/adjustment/adjustment.js";
+import vendorRouter from "./router/vendor/vendorRouter.js";
+import poRouter from "./router/po/poRouter.js";
 
 dotenv.config();
 const app = express();
@@ -43,6 +45,8 @@ app.use("/api/productunit", productUnitRouter);
 app.use("/api/warehouse", warehouseRouter);
 app.use("/api/stock", stockRouter);
 app.use("/api/adjustment", adjRouter);
+app.use("/api/vendor", vendorRouter);
+app.use("/api/po", poRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("run on http://localhost:4000");

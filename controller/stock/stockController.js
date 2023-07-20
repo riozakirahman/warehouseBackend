@@ -54,9 +54,8 @@ const updateStock = (req, res) => {
 };
 const deleteStock = (req, res) => {
   const id = req.params.id;
-  const values = id;
-  const q = `DELETE FROM stock WHERE idstock = ?`;
-  db.query(q, values, (err, data) => {
+  const deleteStock = `DELETE FROM stock WHERE idstock = ?`;
+  db.query(deleteStock, id, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
     }
