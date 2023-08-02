@@ -19,6 +19,7 @@ import stockRouter from "./router/stock/stockRouter.js";
 import adjRouter from "./router/adjustment/adjustment.js";
 import vendorRouter from "./router/vendor/vendorRouter.js";
 import poRouter from "./router/po/poRouter.js";
+import transferRouter from "./router/transfer/transferRouter.js";
 
 dotenv.config();
 const app = express();
@@ -47,6 +48,7 @@ app.use("/api/stock", stockRouter);
 app.use("/api/adjustment", adjRouter);
 app.use("/api/vendor", vendorRouter);
 app.use("/api/po", poRouter);
+app.use("/api/transfer", transferRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("run on http://localhost:4000");
