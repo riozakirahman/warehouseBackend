@@ -12,7 +12,7 @@ function formatDatetime(isoDatetimeString) {
 }
 const getTransfer = (req, res) => {
   const q =
-    "SELECT t.idtransfer,t.idstock, t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, t.created_at, w.warehouse_name as warehouseFromName, w2.warehouse_name as warehouseToName FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom JOIN test.warehouse as w ON w.idwarehouse = t.warehouseFrom JOIN test.warehouse as w2 ON w2.idwarehouse = t.warehouseTo;";
+    "SELECT t.idtransfer,t.idstock, t.created_at, t.created_by,t.modified_at,t.modified_by,t.document_number ,t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, w.warehouse_name as warehouseFromName, w2.warehouse_name as warehouseToName FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom JOIN test.warehouse as w ON w.idwarehouse = t.warehouseFrom JOIN test.warehouse as w2 ON w2.idwarehouse = t.warehouseTo;";
   db.query(q, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -20,6 +20,7 @@ const getTransfer = (req, res) => {
     const formattedData = data.map((item) => ({
       ...item,
       created_at: formatDatetime(item.created_at),
+      modified_at: formatDatetime(item.modified_at),
     }));
 
     return res.json(formattedData);
@@ -27,7 +28,7 @@ const getTransfer = (req, res) => {
 };
 const getTransferWIP = (req, res) => {
   const q =
-    "SELECT t.idtransfer,t.idstock, t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, t.created_at FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom WHERE status = 'WIP';";
+    "SELECT t.idtransfer,t.idstock,t.created_at, t.created_by,t.modified_at,t.modified_by,t.document_number, t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, t.created_at FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom WHERE status = 'WIP';";
   db.query(q, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -59,7 +60,7 @@ const getTransferReceived = (req, res) => {
 const getTransferById = (req, res) => {
   const id = req.params.id;
   const q =
-    "SELECT t.idtransfer,t.idstock, t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, t.created_at FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom WHERE idtransfer = ?";
+    "SELECT t.idtransfer,t.idstock, t.created_at, t.created_by,t.modified_at,t.modified_by,t.document_number,t.status,puc.idproductUnitConversion, puc.idproduct, p.name as product, p.code, u.iduom, u.name as uom, t.qty, t.warehouseFrom, t.warehouseTo, t.created_at FROM test.transfer as t JOIN test.stock as s ON t.idstock = s.idstock JOIN test.productUnitConversion as puc ON puc.idproductUnitConversion = s.idproductUnitConversion JOIN test.product as p ON p.idproduct = puc.idproduct JOIN test.uom as u ON puc.iduom = u.iduom WHERE idtransfer = ?";
   db.query(q, id, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -67,6 +68,7 @@ const getTransferById = (req, res) => {
     const formattedData = data.map((item) => ({
       ...item,
       created_at: formatDatetime(item.created_at),
+      modified_at: formatDatetime(item.modified_at),
     }));
 
     return res.json(formattedData);
@@ -74,10 +76,10 @@ const getTransferById = (req, res) => {
 };
 
 const createTransfer = (req, res) => {
-  const { idstock, warehouseFrom, warehouseTo, qty } = req.body;
-  const values = [idstock, warehouseFrom, warehouseTo, qty];
+  const { idstock, warehouseFrom, warehouseTo, qty, created_by } = req.body;
+  const values = [idstock, warehouseFrom, warehouseTo, qty, created_by];
   const q =
-    "INSERT INTO transfer (idstock, warehouseFrom, warehouseTo, qty)  VALUES (?,?,?,?)";
+    "INSERT INTO transfer (idstock, warehouseFrom, warehouseTo, qty, created_by)  VALUES (?,?,?,?,?)";
   db.query(q, values, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -87,11 +89,12 @@ const createTransfer = (req, res) => {
 };
 
 const updateTransfer = (req, res) => {
-  const { qty } = req.body;
+  const { qty, modified_by } = req.body;
   const id = req.params.id;
-  const values = [qty, id];
+  const values = [qty, modified_by, id];
 
-  const q = "UPDATE transfer SET qty = ? WHERE idtransfer = ? ";
+  const q =
+    "UPDATE transfer SET qty = ?, modified_by = ? WHERE idtransfer = ? ";
   db.query(q, values, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
@@ -101,9 +104,11 @@ const updateTransfer = (req, res) => {
 };
 const updateTransferStatus = (req, res) => {
   const id = req.params.id;
-  const values = [id];
+  const { modified_by } = req.body;
+  const values = [modified_by, id];
 
-  const q = "UPDATE transfer SET status = 'Received' WHERE idtransfer = ? ";
+  const q =
+    "UPDATE transfer SET status = 'Received', modified_by = ? WHERE idtransfer = ? ";
   db.query(q, values, (err, data) => {
     if (err) {
       return res.json(err.sqlMessage);
